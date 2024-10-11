@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct CreativeMindsApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AuthWrapperView()
         }
     }
 }
