@@ -8,11 +8,27 @@
 import SwiftUI
 
 struct PostView: View {
+    let author: String
+    let content: String
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(alignment: .listRowSeparatorLeading, spacing: 10) {
+            HStack {
+                Text(author)
+                    .bold()
+
+                Spacer()
+            }
+
+            Text(content)
+        }
+        .padding()
+        .background(.white)
+        .clipped()
+        .shadow(radius: 5)
     }
 }
 
 #Preview {
-    PostView()
+    PostView(author: "John Doe", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque orci dui, accumsan eu mauris a, tincidunt sodales libero.")
 }

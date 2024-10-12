@@ -8,20 +8,35 @@
 import SwiftUI
 
 struct PostsView: View {
+    @State private var postsVM = PostsViewModel(db: ServiceContainer.shared.dbService)
+
     var body: some View {
         NavigationStack {
             VStack {
                 AppBar()
 
                 ScrollView {
-                    Text("Hello World")
+                    LazyVStack {
+                        ForEach(postsVM.posts) { post in
+                            PostView(author: post.author, content: post.content)
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 10)
+                    }
                 }
                 .frame(maxWidth: .infinity)
+                .refreshable {
+                    await postsVM.fetchAllPosts()
+                }
             }
+        }
+        .environment(postsVM)
+        .task {
+            await postsVM.fetchAllPosts()
         }
     }
 }
 
-#Preview {
-    PostsView()
-}
+//#Preview {
+//    PostsView()
+//}
