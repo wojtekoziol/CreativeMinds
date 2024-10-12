@@ -12,9 +12,45 @@ class FirebaseAuthService: AuthService {
     let db: DBService
 
     private var auth = Auth.auth()
+    private var handle: AuthStateDidChangeListenerHandle?
+    private var userHandler: ((User?) -> Void)?
 
     init(db: DBService) {
         self.db = db
+    }
+
+    var userListener: AsyncStream<User?> {
+        AsyncStream { continuation in
+            userHandler = { user in
+                continuation.yield(user)
+            }
+
+            continuation.onTermination = { @Sendable _ in
+                self.removeAuthListener()
+            }
+
+            addAuthListener()
+        }
+    }
+
+    private func addAuthListener() {
+        handle = auth.addStateDidChangeListener { [weak self] auth, user in
+            Task {
+                if let id = user?.uid {
+                    let userResult = await self?.db.fetchUser(withId: id)
+                    let user = try? userResult?.get()
+                    self?.userHandler?(user)
+                } else {
+                    self?.userHandler?(nil)
+                }
+            }
+        }
+    }
+
+    private func removeAuthListener() {
+        if let handle {
+            auth.removeStateDidChangeListener(handle)
+        }
     }
 
     func signUp(email: String, password: String) async -> Result<User, AuthError> {

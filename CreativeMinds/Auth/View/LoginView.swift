@@ -21,9 +21,16 @@ struct LoginView: View {
 
             SecureField("Password", text: $password)
 
-            Button(authVM.actionButtonText) {
+            Button {
                 Task {
                     await authVM.action(email, password)
+                }
+            } label: {
+                if authVM.isLoading {
+                    ProgressView()
+                        .tint(.white)
+                } else {
+                    Text(authVM.actionButtonText)
                 }
             }
             .customButtonStyle()

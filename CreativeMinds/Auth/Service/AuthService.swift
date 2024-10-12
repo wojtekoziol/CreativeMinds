@@ -8,6 +8,8 @@
 import Foundation
 
 protocol AuthService {
+    var userListener: AsyncStream<User?> { get }
+
     func signUp(email: String, password: String) async -> Result<User, AuthError>
     func signIn(email: String, password: String) async -> Result<User, AuthError>
     func signOut() async

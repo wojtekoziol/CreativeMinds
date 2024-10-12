@@ -16,20 +16,36 @@ import Foundation
     let auth: AuthService
 
     var user: User?
+    var isLoading = false
+
     private var type = LoginType.signIn
 
     init(auth: AuthService) {
         self.auth = auth
+
+        Task {
+            for await user in auth.userListener {
+                self.user = user
+            }
+        }
     }
 
     private func signUp(email: String, password: String) async {
+        isLoading = true
+
         let userResult = await auth.signUp(email: email, password: password)
         user = try? userResult.get()
+
+        isLoading = false
     }
 
     private func signIn(email: String, password: String) async {
+        isLoading = true
+
         let userResult = await auth.signIn(email: email, password: password)
         user = try? userResult.get()
+
+        isLoading = false
     }
 
     func signOut() async {
