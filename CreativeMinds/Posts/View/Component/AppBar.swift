@@ -17,13 +17,12 @@ struct AppBar: View {
 
             Spacer()
 
-            Button("Post") {
-                Task {
-                    guard let userId = authVM.user?.id else { return }
-                    await postsVM.addPost(from: userId, content: "Hello, World!")
+            if let userId = authVM.user?.id {
+                NavigationLink(destination: NewPostView()) {
+                    Text("Post")
+                        .customButtonStyle()
                 }
             }
-            .customButtonStyle()
 
             Circle()
                 .frame(width: 40, height: 40)

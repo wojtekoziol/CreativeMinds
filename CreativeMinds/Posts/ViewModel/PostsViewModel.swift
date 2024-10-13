@@ -19,8 +19,12 @@ import Foundation
     }
 
     func addPost(from author: String, content: String) async {
+        isLoading = true
+
         let post = Post(author: author, content: content)
         await db.addPost(post)
+
+        isLoading = false
     }
 
     func fetchAllPosts() async {
