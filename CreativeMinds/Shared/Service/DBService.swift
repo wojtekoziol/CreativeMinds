@@ -13,4 +13,6 @@ protocol DBService {
 
     func addPost(_ post: Post) async
     func fetchAllPosts() async -> Result<[Post], DBError>
+
+    func fetchUsername(for id: String) async -> Result<String, DBError>
 }

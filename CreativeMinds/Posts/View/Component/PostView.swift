@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct PostView: View {
-    let author: String
+    @Environment(PostsViewModel.self) private var postsVM
+
+    @State var author = "User"
+    let authorId: String
     let content: String
 
     var body: some View {
@@ -24,11 +27,15 @@ struct PostView: View {
         }
         .padding()
         .background(.white)
-        .clipped()
-        .shadow(radius: 5)
+        .border(.regularMaterial, width: 2)
+        .task {
+            if let username = await postsVM.fetchUsername(for: author) {
+                author = username
+            }
+        }
     }
 }
 
-#Preview {
-    PostView(author: "John Doe", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque orci dui, accumsan eu mauris a, tincidunt sodales libero.")
-}
+//#Preview {
+//    PostView(authorId: "John Doe", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque orci dui, accumsan eu mauris a, tincidunt sodales libero.")
+//}

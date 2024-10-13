@@ -56,7 +56,7 @@ class FirebaseAuthService: AuthService {
     func signUp(email: String, password: String) async -> Result<User, AuthError> {
         do {
             let result = try await auth.createUser(withEmail: email, password: password)
-            let user = User(id: result.user.uid, email: result.user.email ?? "", posts: [])
+            let user = User(id: result.user.uid, email: result.user.email ?? "", username: "User", posts: [])
             await db.addUser(user)
             return .success(user)
         } catch AuthErrorCode.invalidEmail {

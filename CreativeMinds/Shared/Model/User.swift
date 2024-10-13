@@ -11,5 +11,6 @@ import Foundation
 struct User: Codable, Identifiable {
     @DocumentID var id: String?
     let email: String
+    let username: String
     let posts: [String]
 }

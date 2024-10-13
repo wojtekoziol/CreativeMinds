@@ -42,4 +42,17 @@ import Foundation
 
         isLoading = false
     }
+
+    func fetchUsername(for id: String) async -> String? {
+        errorMessage = nil
+
+        let result = await db.fetchUsername(for: id)
+        switch result {
+        case .success(let username):
+            return username
+        case .failure(let err):
+            errorMessage = err.errorDescription
+            return nil
+        }
+    }
 }

@@ -54,4 +54,19 @@ class FirebaseDBService: DBService {
             return .failure(.unknown(error.localizedDescription))
         }
     }
+
+    func fetchUsername(for id: String) async -> Result<String, DBError> {
+        do {
+            let ref = db.collection(usersCollectionName).document(id)
+            let snapshot = try await ref.getDocument()
+            let user = try snapshot.data(as: User.self)
+            return .success(user.username)
+        } catch is FirestoreDecodingError {
+            return .failure(.decoding)
+        } catch is FirestoreErrorCode {
+            return .failure(.badResponse)
+        } catch {
+            return .failure(.unknown(error.localizedDescription))
+        }
+    }
 }

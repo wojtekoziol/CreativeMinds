@@ -18,7 +18,7 @@ struct PostsView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(postsVM.posts) { post in
-                            PostView(author: post.author, content: post.content)
+                            PostView(authorId: post.authorId, content: post.content)
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
