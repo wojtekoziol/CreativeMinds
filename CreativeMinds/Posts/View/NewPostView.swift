@@ -31,9 +31,7 @@ struct NewPostView: View {
                       prompt: Text("Your content goes here...").foregroundStyle(.white.opacity(0.5)),
                       axis: .vertical)
             .lineLimit(15, reservesSpace: true)
-            .padding()
-            .foregroundStyle(.white)
-            .background(.graphite)
+            .customTextFieldStyle()
 
             Button {
                 if content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return }

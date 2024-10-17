@@ -24,13 +24,11 @@ struct AppBar: View {
                 }
             }
 
-            Circle()
-                .frame(width: 40, height: 40)
-                .onTapGesture {
-                    Task {
-                        await authVM.signOut()
-                    }
-                }
+            NavigationLink(destination: ProfileView()) {
+                Circle()
+                    .fill(.graphite)
+                    .frame(width: 40)                    
+            }
         }
         .padding()
     }

@@ -22,7 +22,7 @@ import Foundation
         isLoading = true
 
         let post = Post(author: author, content: content)
-        await db.addPost(post)
+        await db.addPost(post, from: author)
 
         isLoading = false
     }
@@ -51,6 +51,7 @@ import Foundation
         case .success(let username):
             return username
         case .failure(let err):
+            print("\(err.debugDescription) - PostsVM - fetchUsername(id: \(id))")
             errorMessage = err.errorDescription
             return nil
         }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PostView: View {
+    @Environment(AuthViewModel.self) private var authVM
     @Environment(PostsViewModel.self) private var postsVM
 
     @State var author = "User"
@@ -29,7 +30,7 @@ struct PostView: View {
         .background(.white)
         .border(.regularMaterial, width: 2)
         .task {
-            if let username = await postsVM.fetchUsername(for: author) {
+            if let userId = authVM.user?.id, let username = await postsVM.fetchUsername(for: userId)  {
                 author = username
             }
         }

@@ -33,9 +33,17 @@ class FirebaseDBService: DBService {
         }
     }
 
-    func addPost(_ post: Post) async {
-        let ref = db.collection(postsCollectionName)
-        _ = try? ref.addDocument(from: post)
+    func addPost(_ post: Post, from userId: String) async {
+        let postsRef = db.collection(postsCollectionName)
+        let postRef = try? postsRef.addDocument(from: post)
+
+        let usersRef = db.collection(usersCollectionName).document(userId)
+        let user = try? await usersRef.getDocument(as: User.self)
+        let updatedPosts = (user?.posts ?? []) + [postRef?.documentID]
+
+        try? await usersRef.updateData([
+            "posts": updatedPosts
+        ])
     }
 
     func fetchAllPosts() async -> Result<[Post], DBError> {
@@ -68,5 +76,12 @@ class FirebaseDBService: DBService {
         } catch {
             return .failure(.unknown(error.localizedDescription))
         }
+    }
+
+    func updateUsername(_ username: String, for id: String) async {
+        let ref = db.collection(usersCollectionName).document(id)
+        try? await ref.updateData([
+            "username": username
+        ])
     }
 }
