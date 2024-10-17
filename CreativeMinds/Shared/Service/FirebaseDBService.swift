@@ -78,10 +78,18 @@ class FirebaseDBService: DBService {
         }
     }
 
-    func updateUsername(_ username: String, for id: String) async {
+    func updateUsername(_ username: String, for id: String) async -> Result<String, DBError> {
         let ref = db.collection(usersCollectionName).document(id)
-        try? await ref.updateData([
-            "username": username
-        ])
+        do {
+            try await ref.updateData([
+                "username": username
+            ])
+            return .success(username)
+        } catch is FirestoreErrorCode {
+            return .failure(.badResponse)
+        } catch {
+            return .failure(.unknown(error.localizedDescription))
+        }
+
     }
 }

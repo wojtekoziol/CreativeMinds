@@ -15,5 +15,5 @@ protocol DBService {
     func fetchAllPosts() async -> Result<[Post], DBError>
 
     func fetchUsername(for id: String) async -> Result<String, DBError>
-    func updateUsername(_ username: String, for id: String) async
+    func updateUsername(_ username: String, for id: String) async -> Result<String, DBError> 
 }

@@ -11,25 +11,33 @@ import Foundation
     private let db: DBService
 
     var username = ""
-    private(set) var errorMessage: String?
+
+    private(set) var bannerData = BannerData.empty
+    var showBanner = false
 
     init(db: DBService) {
         self.db = db
     }
 
     func fetchUsername(for userId: String) async {
-        errorMessage = nil
-
         let result = await db.fetchUsername(for: userId)
         switch result {
         case .success(let username):
             self.username = username
         case .failure(let err):
-            errorMessage = err.errorDescription
+            bannerData = BannerData(type: .error, title: err.localizedDescription, emoji: "😢")
+            showBanner = true
         }
     }
 
     func updateUsername(for userId: String) async {
-        await db.updateUsername(username.trimmingCharacters(in: .whitespacesAndNewlines), for: userId)
+        let result = await db.updateUsername(username.trimmingCharacters(in: .whitespacesAndNewlines), for: userId)
+        switch result {
+        case .success(let username):
+            self.username = username
+        case .failure(let err):
+            bannerData = BannerData(type: .error, title: err.localizedDescription, emoji: "😢")
+            showBanner = true
+        }
     }
 }

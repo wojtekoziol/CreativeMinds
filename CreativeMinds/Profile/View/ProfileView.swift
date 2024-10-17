@@ -56,6 +56,7 @@ struct ProfileView: View {
                 dismiss()
             }
         }
+        .banner(show: $profileVM.showBanner, with: profileVM.bannerData)
     }
 }
 
