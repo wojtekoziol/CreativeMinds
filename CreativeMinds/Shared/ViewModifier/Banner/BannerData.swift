@@ -22,6 +22,17 @@ enum BannerType {
                 .error
         }
     }
+
+    var standardEmoji: String {
+        switch self {
+        case .normal:
+            "😃"
+        case .success:
+            "🎊"
+        case .error:
+            "😢"
+        }
+    }
 }
 
 struct BannerData {
@@ -41,5 +52,9 @@ struct BannerData {
 
     init(type: BannerType, title: String, emoji: String) {
         self.init(type: type, title: title, message: "", emoji: emoji)
+    }
+
+    init(type: BannerType, title: String) {
+        self.init(type: type, title: title, message: "", emoji: type.standardEmoji)
     }
 }

@@ -25,18 +25,22 @@ import Foundation
         case .success(let username):
             self.username = username
         case .failure(let err):
-            bannerData = BannerData(type: .error, title: err.localizedDescription, emoji: "😢")
+            bannerData = BannerData(type: .error, title: err.localizedDescription)
             showBanner = true
         }
     }
 
     func updateUsername(for userId: String) async {
-        let result = await db.updateUsername(username.trimmingCharacters(in: .whitespacesAndNewlines), for: userId)
+        username = username.trimmingCharacters(in: .whitespaces)
+
+        let result = await db.updateUsername(username, for: userId)
         switch result {
         case .success(let username):
             self.username = username
+            bannerData = BannerData(type: .success, title: "Username updated successfully!")
+            showBanner = true
         case .failure(let err):
-            bannerData = BannerData(type: .error, title: err.localizedDescription, emoji: "😢")
+            bannerData = BannerData(type: .error, title: err.localizedDescription)
             showBanner = true
         }
     }

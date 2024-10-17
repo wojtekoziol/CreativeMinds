@@ -20,7 +20,7 @@ struct BannerModifier: ViewModifier {
                     Text(data.emoji)
                         .font(.largeTitle)
 
-                    VStack(alignment: .leading) {
+                    VStack(alignment: data.message != nil ? .leading : .center) {
                         Text(data.title)
                             .bold()
 
@@ -35,7 +35,6 @@ struct BannerModifier: ViewModifier {
                 .frame(maxWidth: .infinity)
                 .foregroundStyle(.white)
                 .padding()
-                .containerRelativeFrame(.horizontal) { width, _ in width * 0.9 }
                 .background(data.type.backgroundColor)
                 .clipShape(.rect(cornerRadius: 10))
                 .shadow(radius: 10)
