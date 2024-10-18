@@ -63,6 +63,28 @@ class FirebaseDBService: DBService {
         }
     }
 
+    func deletePost(_ post: Post) async -> Result<String, DBError> {
+        guard let postId = post.id else { return .failure(.decoding)}
+        do {
+            let postRef = db.collection(postsCollectionName).document(postId)
+            try await postRef.delete()
+
+            let userRef = db.collection(usersCollectionName).document(post.authorId)
+            let user = try await userRef.getDocument(as: User.self)
+            let updatedPosts = user.posts.filter { $0 != postId }
+
+            try await userRef.updateData([
+                "posts": updatedPosts
+            ])
+
+            return .success(postId)
+        } catch is FirestoreErrorCode {
+            return .failure(.badResponse)
+        } catch {
+            return .failure(.unknown(error.localizedDescription))
+        }
+    }
+
     func fetchUsername(for id: String) async -> Result<String, DBError> {
         do {
             let ref = db.collection(usersCollectionName).document(id)

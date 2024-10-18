@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PostsView: View {
+    @Environment(AuthViewModel.self) private var authVM
+
     @State private var postsVM = PostsViewModel(db: ServiceContainer.shared.dbService)
 
     var body: some View {
@@ -17,8 +19,14 @@ struct PostsView: View {
 
                 ScrollView {
                     LazyVStack {
+                        if postsVM.posts.isEmpty {
+                            Text("No posts to show")
+                                .foregroundStyle(.secondary)
+                                .padding(.top)
+                        }
+
                         ForEach(postsVM.posts) { post in
-                            PostView(authorId: post.authorId, content: post.content)
+                            PostView(post: post)
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
@@ -34,6 +42,20 @@ struct PostsView: View {
         .task {
             await postsVM.fetchAllPosts()
         }
+        .banner(show: $postsVM.showBanner, with: postsVM.bannerData)
+        .alert(postsVM.alertTitle, isPresented: $postsVM.showAlert) {
+            Button("Delete", role: .destructive) {
+                guard let userId = authVM.user?.id else { return }
+                Task {
+                    await postsVM.deletePost(userId: userId)
+                }
+            }
+
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text(postsVM.alertMessage)
+        }
+
     }
 }
 

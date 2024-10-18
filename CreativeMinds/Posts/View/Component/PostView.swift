@@ -12,8 +12,7 @@ struct PostView: View {
     @Environment(PostsViewModel.self) private var postsVM
 
     @State var author = "User"
-    let authorId: String
-    let content: String
+    let post: Post
 
     var body: some View {
         VStack(alignment: .listRowSeparatorLeading, spacing: 10) {
@@ -22,15 +21,23 @@ struct PostView: View {
                     .bold()
 
                 Spacer()
+
+                if authVM.user?.id == post.authorId {
+                    Button {
+                        postsVM.showDeleteAlert(from: post)
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                }
             }
 
-            Text(content)
+            Text(post.content)
         }
         .padding()
         .background(.white)
         .border(.regularMaterial, width: 2)
         .task {
-            if let userId = authVM.user?.id, let username = await postsVM.fetchUsername(for: userId)  {
+            if let username = await postsVM.fetchUsername(for: post.authorId)  {
                 author = username
             }
         }
