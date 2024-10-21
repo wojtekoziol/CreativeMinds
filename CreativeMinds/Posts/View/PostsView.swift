@@ -26,7 +26,7 @@ struct PostsView: View {
                         }
 
                         ForEach(postsVM.posts) { post in
-                            PostView(post: post)
+                            PostCardView(post: post)
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)

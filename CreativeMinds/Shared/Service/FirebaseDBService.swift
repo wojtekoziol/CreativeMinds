@@ -85,6 +85,42 @@ class FirebaseDBService: DBService {
         }
     }
 
+    func addComment(_ comment: Comment, to postId: String) async -> Result<Comment, DBError> {
+        do {
+            let postRef = db.collection(postsCollectionName).document(postId)
+            let encodedComment = comment.firestoreEncoded()
+
+            try await postRef.updateData([
+                "comments": FieldValue.arrayUnion([encodedComment])
+            ])
+
+            return .success(comment)
+        } catch is FirestoreEncodingError {
+            return .failure(.encoding)
+        } catch is FirestoreErrorCode {
+            return .failure(.badResponse)
+        } catch {
+            return .failure(.unknown(error.localizedDescription))
+        }
+    }
+
+    func deleteComment(_ comment: Comment, from postId: String) async -> Result<String, DBError> {
+        do {
+            let postRef = db.collection(postsCollectionName).document(postId)
+            let encodedComment = comment.firestoreEncoded()
+
+            try await postRef.updateData([
+                "comments": FieldValue.arrayRemove([encodedComment])
+            ])
+
+            return .success(comment.id)
+        } catch is FirestoreErrorCode {
+            return .failure(.badResponse)
+        } catch {
+            return .failure(.unknown(error.localizedDescription))
+        }
+    }
+
     func fetchUsername(for id: String) async -> Result<String, DBError> {
         do {
             let ref = db.collection(usersCollectionName).document(id)

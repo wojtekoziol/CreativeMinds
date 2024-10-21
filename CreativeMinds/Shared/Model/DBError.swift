@@ -9,13 +9,14 @@ import Foundation
 
 enum DBError: CustomDebugStringConvertible, Error, LocalizedError {
     case badResponse
+    case encoding
     case decoding
     case unauthorizedAccess
     case unknown(String)
 
     var errorDescription: String? {
         switch self {
-        case .decoding:
+        case .encoding, .decoding:
             "Something went wrong. Please contact support."
         case .badResponse, .unknown(_):
             "Something went wrong. Please try again later."
@@ -34,6 +35,8 @@ enum DBError: CustomDebugStringConvertible, Error, LocalizedError {
             "DBError - Unknown: \(err)"
         case .unauthorizedAccess:
             "DBError - Unauthorized access"
+        case .encoding:
+            "DBError - Encoding"
         }
     }
 }
