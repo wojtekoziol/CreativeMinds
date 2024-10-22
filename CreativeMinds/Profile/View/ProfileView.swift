@@ -26,6 +26,12 @@ struct ProfileView: View {
                         await profileVM.uploadProfilePicture(imageData, for: userId)
                     }
                 }
+            } onDeletePicture: {
+                Task {
+                    await verifyUser { userId in
+                        await profileVM.deleteProfilePicture(for: userId)
+                    }
+                }
             }
 
             Spacer()

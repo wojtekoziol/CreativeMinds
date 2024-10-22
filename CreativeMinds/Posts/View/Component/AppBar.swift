@@ -11,6 +11,8 @@ struct AppBar: View {
     @Environment(AuthViewModel.self) private var authVM
     @Environment(PostsViewModel.self) private var postsVM
 
+    @State private var image: UIImage?
+
     var body: some View {
         HStack {
             Text("Creative Minds")
@@ -25,12 +27,14 @@ struct AppBar: View {
             }
 
             NavigationLink(destination: ProfileView()) {
-                Circle()
-                    .fill(.graphite)
-                    .frame(width: 40)                    
+                CircularProfilePicture(image: image, size: 40)
             }
         }
         .padding()
+        .task {
+            guard let userId = authVM.user?.id else { return }
+            image = await postsVM.downloadProfilePicture(for: userId)
+        }
     }
 }
 

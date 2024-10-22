@@ -186,9 +186,25 @@ class FirebaseDBService: DBService {
                 case .success(let data):
                     continuation.resume(returning: .success(data))
                 case .failure(let error):
-                    continuation.resume(returning: .failure(DBError.unknown(error.localizedDescription)))
+                    switch error {
+                    case StorageErrorCode.objectNotFound:
+                        continuation.resume(returning: .failure(DBError.fileNotFound))
+                    default:
+                        continuation.resume(returning: .failure(DBError.unknown(error.localizedDescription)))
+                    }
                 }
             }
+        }
+    }
+
+    func deleteProfilePicture(for userId: String) async -> Result<Void, DBError> {
+        let userPictureRef = profilePicturesStorageRef.child(userId)
+        do {
+            try await userPictureRef.delete()
+
+            return .success(Void())
+        } catch {
+            return .failure(.unknown(error.localizedDescription))
         }
     }
 }

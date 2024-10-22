@@ -13,14 +13,16 @@ struct CircularProfilePicture: View {
     let size: Double
     let isLoading: Bool
     let onImagePick: ((PhotosPickerItem) -> Void)?
+    let onDeletePicture: (() -> Void)?
 
     @State private var profilePictureItem: PhotosPickerItem?
 
-    init(image: UIImage?, size: Double, isLoading: Bool = false, onImagePick: ((PhotosPickerItem) -> Void)? = nil) {
+    init(image: UIImage?, size: Double, isLoading: Bool = false, onImagePick: ((PhotosPickerItem) -> Void)? = nil, onDeletePicture: (() -> Void)? = nil) {
         self.image = image
         self.size = size
         self.isLoading = isLoading
         self.onImagePick = onImagePick
+        self.onDeletePicture = onDeletePicture
     }
 
     @ViewBuilder var circularImage: some View {
@@ -48,12 +50,22 @@ struct CircularProfilePicture: View {
             PhotosPicker(selection: $profilePictureItem, matching: .images) {
                 circularImage
             }
+            .frame(width: size, height: size)
+            .contentShape(.contextMenuPreview, .circle)
+            .contextMenu {
+                if image != nil {
+                    Button(role: .destructive) {
+                        onDeletePicture?()
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
+            }
             .onChange(of: profilePictureItem) {
                 if let profilePictureItem {
                     onImagePick(profilePictureItem)
                 }
             }
-            .frame(width: size, height: size)
         } else {
             circularImage
         }

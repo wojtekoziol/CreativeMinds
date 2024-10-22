@@ -5,7 +5,7 @@
 //  Created by Wojciech Kozioł on 12/10/2024.
 //
 
-import Foundation
+import SwiftUI
 
 @Observable class PostsViewModel {
     let db: DBService
@@ -90,6 +90,16 @@ import Foundation
             print("\(err.debugDescription) - PostsVM - fetchUsername(id: \(id))")
             bannerData = BannerData(type: .error, title: err.localizedDescription)
             showBanner = true
+            return nil
+        }
+    }
+
+    func downloadProfilePicture(for userId: String) async -> UIImage? {
+        let result = await db.downloadProfilePicture(for: userId)
+        switch result {
+        case .success(let pictureData):
+            return UIImage(data: pictureData)
+        case .failure(_):
             return nil
         }
     }

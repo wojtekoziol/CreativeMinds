@@ -73,7 +73,27 @@ import SwiftUI
         case .success(let pictureData):
             profilePicture = UIImage(data: pictureData)
         case .failure(let err):
-            debugPrint("ProfileViewModel - downloadProfilePicture(userId: \(userId)) - \(err.debugDescription)")
+            switch err {
+            case .fileNotFound:
+                break
+            default:
+                bannerData = BannerData(type: .error, title: err.localizedDescription)
+                showBanner = true
+            }
+
+        }
+
+        isLoading = false
+    }
+
+    func deleteProfilePicture(for userId: String) async {
+        isLoading = true
+
+        let result = await db.deleteProfilePicture(for: userId)
+        switch result {
+        case .success(_):
+            profilePicture = nil
+        case .failure(let err):
             bannerData = BannerData(type: .error, title: err.localizedDescription)
             showBanner = true
         }

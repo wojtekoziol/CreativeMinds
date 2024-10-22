@@ -11,9 +11,12 @@ struct PostCardView: View {
     @Environment(AuthViewModel.self) private var authVM
     @Environment(PostsViewModel.self) private var postsVM
 
-    @State var author = "User"
     let post: Post
     let fromComments: Bool
+
+
+    @State var author = "User"
+    @State private var image: UIImage?
 
     init(post: Post, fromComments: Bool = false) {
         self.post = post
@@ -29,6 +32,8 @@ struct PostCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
+                CircularProfilePicture(image: image, size: 20)
+
                 Text(author)
                     .bold()
 
@@ -58,6 +63,9 @@ struct PostCardView: View {
             if let username = await postsVM.fetchUsername(for: post.authorId)  {
                 author = username
             }
+        }
+        .task {
+            image = await postsVM.downloadProfilePicture(for: post.authorId)
         }
     }
 }

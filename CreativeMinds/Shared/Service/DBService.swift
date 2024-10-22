@@ -23,4 +23,5 @@ protocol DBService {
 
     func uploadProfilePicture(picture: Data, for userId: String) async -> Result<Data, DBError>
     func downloadProfilePicture(for userId: String) async -> Result<Data, DBError>
+    func deleteProfilePicture(for userId: String) async -> Result<Void, DBError>
 }

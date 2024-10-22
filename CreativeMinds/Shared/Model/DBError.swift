@@ -13,13 +13,14 @@ enum DBError: CustomDebugStringConvertible, Error, LocalizedError {
     case decoding
     case unauthorizedAccess
     case largeFile
+    case fileNotFound
     case unknown(String)
 
     var errorDescription: String? {
         switch self {
         case .encoding, .decoding:
             "Something went wrong. Please contact support."
-        case .badResponse, .unknown(_):
+        case .badResponse, .unknown(_), .fileNotFound:
             "Something went wrong. Please try again later."
         case .unauthorizedAccess:
             "Unauthorized access. Please contact support."
@@ -42,6 +43,8 @@ enum DBError: CustomDebugStringConvertible, Error, LocalizedError {
             "DBError - Encoding"
         case .largeFile:
             "DBError - Large file"
+        case .fileNotFound:
+            "DBError - File not found"
         }
     }
 }
