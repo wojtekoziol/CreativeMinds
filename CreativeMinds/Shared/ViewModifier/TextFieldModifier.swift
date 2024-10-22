@@ -10,6 +10,7 @@ import SwiftUI
 struct TextFieldModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
+            .textFieldStyle(.plain)
             .padding()
             .foregroundStyle(.white)
             .background(.graphite)

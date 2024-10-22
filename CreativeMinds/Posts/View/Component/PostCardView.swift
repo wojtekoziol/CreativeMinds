@@ -47,7 +47,7 @@ struct PostCardView: View {
 
             if !fromComments, let commentsCount = post.comments?.count {
                 NavigationLink(destination: CommentsView(post: post, author: author)) {
-                    Label("\(commentsCount) comment(s)", systemImage: "bubble")
+                    Label("^[\(commentsCount) comment](inflect: true)", systemImage: "bubble")
                 }
             }
         }

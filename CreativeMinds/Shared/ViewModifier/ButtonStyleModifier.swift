@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ButtonStyleModifier: ViewModifier {
+    let padding: Bool
+
     func body(content: Content) -> some View {
         content
             .padding(.horizontal)
@@ -18,7 +20,7 @@ struct ButtonStyleModifier: ViewModifier {
 }
 
 extension View {
-    func customButtonStyle() -> some View {
-        modifier(ButtonStyleModifier())
+    func customButtonStyle(padding: Bool = true) -> some View {
+        modifier(ButtonStyleModifier(padding: padding))
     }
 }

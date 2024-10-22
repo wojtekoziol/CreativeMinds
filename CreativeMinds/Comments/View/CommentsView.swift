@@ -13,6 +13,8 @@ struct CommentsView: View {
     @State private var commentsVM: CommentsViewModel
     @State private var content = ""
 
+    @State private var buttonHeight = 50.0
+
     let author: String
     let post: Post
 
@@ -32,6 +34,14 @@ struct CommentsView: View {
                           text: $content,
                           prompt: Text("Your comment goes here...").foregroundStyle(.white.opacity(0.5)))
                 .customTextFieldStyle()
+                .background(
+                    GeometryReader { proxy in
+                        Color.clear
+                            .onAppear {
+                                buttonHeight = proxy.size.height
+                            }
+                    }
+                )
 
                 Button("Comment") {
                     guard !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let userId = authVM.user?.id else { return }
@@ -43,10 +53,16 @@ struct CommentsView: View {
                         }
                     }
                 }
+                .frame(maxHeight: buttonHeight - 10) // 10 - custom button style vertical padding
                 .customButtonStyle()
             }
 
             List {
+                if commentsVM.comments.isEmpty {
+                    Text("No comments yet")
+                        .padding(.top)
+                }
+
                 ForEach(commentsVM.comments) { comment in
                     CommentCardView(comment: comment)
                         .environment(commentsVM)
