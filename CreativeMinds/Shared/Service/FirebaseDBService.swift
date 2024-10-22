@@ -186,11 +186,10 @@ class FirebaseDBService: DBService {
                 case .success(let data):
                     continuation.resume(returning: .success(data))
                 case .failure(let error):
-                    switch error {
-                    case StorageErrorCode.objectNotFound:
-                        continuation.resume(returning: .failure(DBError.fileNotFound))
-                    default:
-                        continuation.resume(returning: .failure(DBError.unknown(error.localizedDescription)))
+                    if let error = error as NSError?, let errCode = StorageErrorCode(rawValue: error.code), errCode == .objectNotFound {
+                        continuation.resume(returning: .failure(.fileNotFound))
+                    } else {
+                        continuation.resume(returning: .failure(.unknown(error.localizedDescription)))
                     }
                 }
             }
