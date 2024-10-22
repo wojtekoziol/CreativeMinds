@@ -19,5 +19,8 @@ protocol DBService {
     func deleteComment(_ comment: Comment, from postId: String) async -> Result<String, DBError>
 
     func fetchUsername(for id: String) async -> Result<String, DBError>
-    func updateUsername(_ username: String, for id: String) async -> Result<String, DBError> 
+    func updateUsername(_ username: String, for id: String) async -> Result<String, DBError>
+
+    func uploadProfilePicture(picture: Data, for userId: String) async -> Result<Data, DBError>
+    func downloadProfilePicture(for userId: String) async -> Result<Data, DBError>
 }

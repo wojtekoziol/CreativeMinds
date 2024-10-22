@@ -17,7 +17,7 @@ struct AppBar: View {
 
             Spacer()
 
-            if let userId = authVM.user?.id {
+            if authVM.user?.id != nil {
                 NavigationLink(destination: NewPostView()) {
                     Text("Post")
                         .customButtonStyle()

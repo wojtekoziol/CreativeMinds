@@ -12,6 +12,7 @@ enum DBError: CustomDebugStringConvertible, Error, LocalizedError {
     case encoding
     case decoding
     case unauthorizedAccess
+    case largeFile
     case unknown(String)
 
     var errorDescription: String? {
@@ -22,6 +23,8 @@ enum DBError: CustomDebugStringConvertible, Error, LocalizedError {
             "Something went wrong. Please try again later."
         case .unauthorizedAccess:
             "Unauthorized access. Please contact support."
+        case .largeFile:
+            "Your file is too large. Reduce the size and try again."
         }
     }
 
@@ -37,6 +40,8 @@ enum DBError: CustomDebugStringConvertible, Error, LocalizedError {
             "DBError - Unauthorized access"
         case .encoding:
             "DBError - Encoding"
+        case .largeFile:
+            "DBError - Large file"
         }
     }
 }

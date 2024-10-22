@@ -19,9 +19,14 @@ struct ProfileView: View {
             Spacer()
             Spacer()
 
-            Circle()
-                .fill(.graphite)
-                .frame(width: 100)
+            CircularProfilePicture(image: profileVM.profilePicture, size: 100, isLoading: profileVM.isLoading) { item in
+                Task {
+                    await verifyUser { userId in
+                        guard let imageData = try? await item.loadTransferable(type: Data.self) else { return }
+                        await profileVM.uploadProfilePicture(imageData, for: userId)
+                    }
+                }
+            }
 
             Spacer()
 
@@ -50,13 +55,24 @@ struct ProfileView: View {
         }
         .padding()
         .task {
-            if let userId = authVM.user?.id {
+            await verifyUser { userId in
                 await profileVM.fetchUsername(for: userId)
-            } else {
-                dismiss()
+            }
+        }
+        .task {
+            await verifyUser { userId in
+                await profileVM.downloadProfilePicture(for: userId)
             }
         }
         .banner(show: $profileVM.showBanner, with: profileVM.bannerData)
+    }
+
+    private func verifyUser(completion: (_ userId: String) async -> Void) async {
+        if let userId = authVM.user?.id {
+            await completion(userId)
+        } else {
+            dismiss()
+        }
     }
 }
 

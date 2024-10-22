@@ -6,12 +6,20 @@
 //
 
 import FirebaseFirestore
+import FirebaseStorage
 import Foundation
 
 class FirebaseDBService: DBService {
+    private let maxProfilePictureSize: Int64 = 3 * 1024 * 1024
+
     private let db = Firestore.firestore()
     private let usersCollectionName = "users"
     private let postsCollectionName = "posts"
+
+    private let storage = Storage.storage()
+    private var profilePicturesStorageRef: StorageReference {
+        storage.reference(withPath: "profilepictures")
+    }
 
     func addUser(_ user: User) async {
         guard let id = user.id else { return }
@@ -148,6 +156,39 @@ class FirebaseDBService: DBService {
         } catch {
             return .failure(.unknown(error.localizedDescription))
         }
+    }
 
+    func uploadProfilePicture(picture: Data, for userId: String) async -> Result<Data, DBError> {
+        guard picture.count <= maxProfilePictureSize else {
+            return .failure(.largeFile)
+        }
+
+        let metadata = StorageMetadata()
+        metadata.contentType = "image"
+
+        let userPictureRef = profilePicturesStorageRef.child(userId)
+
+        do {
+            _ = try await userPictureRef.putDataAsync(picture, metadata: metadata)
+
+            return .success(picture)
+        } catch {
+            return .failure(.unknown(error.localizedDescription))
+        }
+    }
+
+    func downloadProfilePicture(for userId: String) async -> Result<Data, DBError> {
+        return await withCheckedContinuation { continuation in
+            let userPictureRef = profilePicturesStorageRef.child(userId)
+
+            userPictureRef.getData(maxSize: maxProfilePictureSize) { result in
+                switch result {
+                case .success(let data):
+                    continuation.resume(returning: .success(data))
+                case .failure(let error):
+                    continuation.resume(returning: .failure(DBError.unknown(error.localizedDescription)))
+                }
+            }
+        }
     }
 }
